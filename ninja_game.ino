@@ -22,9 +22,9 @@ int ball_y = 0;
 int ball_vx = 3;
 int ball_vy = 2;
 int ballStart = 1;
-int lives = 0;
-// 0 is a black ball you slice, 1 is a gray ball you absorb
-int ball_type = 0;
+int win = 0;
+// 2,3,4 is a black ball you slice, 1 is a gray ball you absorb
+int ball_type = 2;
 char mode[] = "Easy";
 unsigned long referenceTime;
 
@@ -196,65 +196,6 @@ void setup() {
   obstacle_direction = random(1, 5);
 }
 
-void reset(){
-  obstacle_direction = random(1, 5);
-  ballStart = 1;
-  }
-
-void initPrograme()
-{
-  goTitleScreen();
-  state = gameMenu;
-  gb.battery.show = false;
-}
-
-void goTitleScreen()
-{
-  gb.titleScreen(F("Ninja Game"));
-}
-
-void chrSprite()
-{
-  if (player_direction == 0){
-  gb.display.setColor(BLACK);
-  gb.display.drawBitmap(LCDWIDTH/2-4-1,LCDHEIGHT/2-7-1,defaultN,NOROT,NOFLIP);
-  gb.display.setColor(GRAY);
-  gb.display.drawBitmap(LCDWIDTH/2-4-1,LCDHEIGHT/2-7-1,defaultSword,NOROT,NOFLIP);
-  }
-  if (player_direction == 1){
-  gb.display.setColor(BLACK);
-  gb.display.drawBitmap(LCDWIDTH/2-4-1,LCDHEIGHT/2-7-1,holdA,NOROT,NOFLIP);
-  gb.display.setColor(GRAY);
-  gb.display.drawBitmap(LCDWIDTH/2-7-1,LCDHEIGHT/2-5-1,sideSword,NOROT,NOFLIP);
-  gb.display.setColor(BLACK);
-  gb.display.drawPixel(LCDWIDTH/2-1,LCDHEIGHT/2+1-1);  
-  }
-  if (player_direction == 2){
-  gb.display.setColor(BLACK);
-  gb.display.drawBitmap(LCDWIDTH/2-4-1,LCDHEIGHT/2-7-1,holdA,NOROT,NOFLIP);
-  gb.display.fillRect(LCDWIDTH/2-4-1+7-6,LCDHEIGHT/2-7-1+10,1,2);
-  gb.display.setColor(GRAY);
-  gb.display.fillRect(LCDWIDTH/2-4-1+1-6+12,LCDHEIGHT/2+2-1,7,1);
-  gb.display.setColor(BLACK);
-  gb.display.drawPixel(LCDWIDTH/2-4-1+7-7+8,LCDHEIGHT/2-7-1+9);  }
-  if (player_direction == 3){
-  gb.display.setColor(BLACK);
-  gb.display.drawBitmap(LCDWIDTH/2-4-1,LCDHEIGHT/2-7-1,holdA,NOROT,NOFLIP);
-  gb.display.setColor(GRAY);
-  gb.display.drawBitmap(LCDWIDTH/2-7-1,LCDHEIGHT/2+2-1,sideSword,NOROT,NOFLIP);
-  gb.display.setColor(BLACK);
-  gb.display.drawPixel(LCDWIDTH/2-1,LCDHEIGHT/2+3-1);  
-  }
-  if (player_direction == 4){
-  gb.display.setColor(BLACK);
-  gb.display.drawBitmap(LCDWIDTH/2-4-1,LCDHEIGHT/2-7-1,holdA,NOROT,NOFLIP);
-  gb.display.fillRect(LCDWIDTH/2-4-1+7,LCDHEIGHT/2-7-1+10,1,2);
-  gb.display.setColor(GRAY);
-  gb.display.fillRect(LCDWIDTH/2-4-1+1-6,LCDHEIGHT/2+2-1,7,1);
-  gb.display.setColor(BLACK);
-  gb.display.drawPixel(LCDWIDTH/2-4-1+7-7,LCDHEIGHT/2-7-1+9);  }
-}
-
 void loop() {
   // put your main code here, to run repeatedly:
   if(gb.update()){
@@ -325,9 +266,14 @@ void loop() {
         
         case game :
         gb.display.fontSize = 1;
+        if(score < 0){score = 0;}
         //Checks if the player is pressing a button and changes 
         //the direction variable accordingly
         playerInput();
+        
+        //show which color the ball is based on if you can absorb it or not
+        if(ball_type == 1){gb.display.setColor(GRAY);}
+        else{gb.display.setColor(BLACK);}
         
         //sends the ball in the direction starting from the border
         //random direction indicated by the obstacle_direction variable
@@ -339,14 +285,14 @@ void loop() {
         //detect if the ball is in the sword slicing range and if the player slices
         detectinRange();
         
+        //print where the ball is
+        gb.display.fillRect(ball_x, ball_y, ball_size, ball_size);
+        //prints the character in the direction the player is pressing
         //print the score
         gb.display.setColor(BLACK);
         //change where it prints so the numbers don't go off the screen
         formatScore();
         gb.display.print(score);
-        //print where the ball is
-        gb.display.fillRect(ball_x, ball_y, ball_size, ball_size);
-        //prints the character in the direction the player is pressing
         chrSprite();
         break;
         
@@ -376,6 +322,7 @@ void loop() {
         }
       }
 }
+
 void playerInput(){
         //I make it repeat so it checks over and over rather than just showing the sprite once
         //I originally had the sprite code in here but realized it would be simpler to 
@@ -393,24 +340,49 @@ void playerInput(){
         //this else makes it so if no buttons are pressed it goes back to neutral
         }}}
     }
-void detectinRange(){
-        //up detection
-        if(gb.collideRectRect(ball_x, ball_y, ball_size, ball_size, LCDWIDTH/2-4,LCDHEIGHT/2-11, 7, 7)){
-          if(player_direction == 1){score = score + 100; reset();}
-          }
-        //right detection
-        if(gb.collideRectRect(ball_x, ball_y, ball_size, ball_size, LCDWIDTH/2-4-1+7+1,LCDHEIGHT/2-7-1+4, 8, 10)){
-          if(player_direction == 2){score = score + 100; reset();}
-          }
-        //down detection
-        if(gb.collideRectRect(ball_x, ball_y, ball_size, ball_size, LCDWIDTH/2-4,LCDHEIGHT/2-9+14+1, 7, 7)){
-          if(player_direction == 3){score = score + 100; reset();}
-          }
-        //left detection
-        if(gb.collideRectRect(ball_x, ball_y, ball_size, ball_size, LCDWIDTH/2-4-1-7,LCDHEIGHT/2-7-1+4, 8, 10)){
-          if(player_direction == 4){score = score + 100; reset();}
-          }
+
+void chrSprite()
+{
+  if (player_direction == 0){
+  gb.display.setColor(BLACK);
+  gb.display.drawBitmap(LCDWIDTH/2-4-1,LCDHEIGHT/2-7-1,defaultN,NOROT,NOFLIP);
+  gb.display.setColor(GRAY);
+  gb.display.drawBitmap(LCDWIDTH/2-4-1,LCDHEIGHT/2-7-1,defaultSword,NOROT,NOFLIP);
   }
+  if (player_direction == 1){
+  gb.display.setColor(BLACK);
+  gb.display.drawBitmap(LCDWIDTH/2-4-1,LCDHEIGHT/2-7-1,holdA,NOROT,NOFLIP);
+  gb.display.setColor(GRAY);
+  gb.display.drawBitmap(LCDWIDTH/2-7-1,LCDHEIGHT/2-5-1,sideSword,NOROT,NOFLIP);
+  gb.display.setColor(BLACK);
+  gb.display.drawPixel(LCDWIDTH/2-1,LCDHEIGHT/2+1-1);  
+  }
+  if (player_direction == 2){
+  gb.display.setColor(BLACK);
+  gb.display.drawBitmap(LCDWIDTH/2-4-1,LCDHEIGHT/2-7-1,holdA,NOROT,NOFLIP);
+  gb.display.fillRect(LCDWIDTH/2-4-1+7-6,LCDHEIGHT/2-7-1+10,1,2);
+  gb.display.setColor(GRAY);
+  gb.display.fillRect(LCDWIDTH/2-4-1+1-6+12,LCDHEIGHT/2+2-1,7,1);
+  gb.display.setColor(BLACK);
+  gb.display.drawPixel(LCDWIDTH/2-4-1+7-7+8,LCDHEIGHT/2-7-1+9);  }
+  if (player_direction == 3){
+  gb.display.setColor(BLACK);
+  gb.display.drawBitmap(LCDWIDTH/2-4-1,LCDHEIGHT/2-7-1,holdA,NOROT,NOFLIP);
+  gb.display.setColor(GRAY);
+  gb.display.drawBitmap(LCDWIDTH/2-7-1,LCDHEIGHT/2+2-1,sideSword,NOROT,NOFLIP);
+  gb.display.setColor(BLACK);
+  gb.display.drawPixel(LCDWIDTH/2-1,LCDHEIGHT/2+3-1);  
+  }
+  if (player_direction == 4){
+  gb.display.setColor(BLACK);
+  gb.display.drawBitmap(LCDWIDTH/2-4-1,LCDHEIGHT/2-7-1,holdA,NOROT,NOFLIP);
+  gb.display.fillRect(LCDWIDTH/2-4-1+7,LCDHEIGHT/2-7-1+10,1,2);
+  gb.display.setColor(GRAY);
+  gb.display.fillRect(LCDWIDTH/2-4-1+1-6,LCDHEIGHT/2+2-1,7,1);
+  gb.display.setColor(BLACK);
+  gb.display.drawPixel(LCDWIDTH/2-4-1+7-7,LCDHEIGHT/2-7-1+9);  }
+}
+
 void obstacleDirection() {
         //come from the left
         if(obstacle_direction == 1){
@@ -449,22 +421,46 @@ void obstacleDirection() {
             }
           }
   }
+
+void detectinRange(){
+        //up detection
+        if(gb.collideRectRect(ball_x, ball_y, ball_size, ball_size, LCDWIDTH/2-4,LCDHEIGHT/2-11, 7, 7)){
+          if(player_direction == 1){if(ball_type == 1){score = score - 200;} else {score = score + 100;} reset();}
+          }
+        //right detection
+        if(gb.collideRectRect(ball_x, ball_y, ball_size, ball_size, LCDWIDTH/2-4-1+7+1,LCDHEIGHT/2-7-1+4, 8, 10)){
+          if(player_direction == 2){if(ball_type == 1){score = score - 200;} else {score = score + 100;} reset();}
+          }
+        //down detection
+        if(gb.collideRectRect(ball_x, ball_y, ball_size, ball_size, LCDWIDTH/2-4,LCDHEIGHT/2-9+14+1, 7, 7)){
+          if(player_direction == 3){if(ball_type == 1){score = score - 200;} else {score = score + 100;} reset();}
+          }
+        //left detection
+        if(gb.collideRectRect(ball_x, ball_y, ball_size, ball_size, LCDWIDTH/2-4-1-7,LCDHEIGHT/2-7-1+4, 8, 10)){
+          if(player_direction == 4){if(ball_type == 1){score = score - 200;} else {score = score + 100;} reset();}
+          }
+  }
+  
 void formatScore(){
     if(score == 0){gb.display.cursorX = LCDWIDTH-4;}
     else if(score < 1000){gb.display.cursorX = LCDWIDTH-12;}
+    else if(score < 10000){gb.display.cursorX = LCDWIDTH-16;}
+    else if(score < 32700){gb.display.cursorX = LCDWIDTH-20;}
+    else{win = 1; state = gameOver;}
     }
+    
 void checkMiddle(){
         if(obstacle_direction == 1|| obstacle_direction == 3){
         if(ball_x == LCDWIDTH/2-ball_size/2){
-        //if the reset is in action it respawns the ball, gameover state ends the game
-        //reset();
-        state = gameOver;
+        if(ball_type == 1){if(player_direction == 0){score = score + 200;} reset();}
+        else{state = gameOver;}
           }
         }
         else{
         if(ball_y == LCDHEIGHT/2-ball_size/2){
         //reset();
-        state = gameOver;
+        if(ball_type == 1){if(player_direction == 0){score = score + 200;} reset();}
+        else{state = gameOver;}
           }
          }
         }
@@ -475,11 +471,8 @@ void doTutorial() {
     gb.pickRandomSeed();
     return;
   }
-  
   unsigned long t = gb.frameCount - referenceTime;
-
   gb.display.setColor(BLACK);
-  
   if (t < 50) {
     gb.display.cursorX = 35;
     gb.display.cursorY = 8;
@@ -524,4 +517,22 @@ void doTutorial() {
     state = gameMenu;
     gb.pickRandomSeed();
   }
+}
+
+void reset(){
+  ball_type = random(1, 5);
+  obstacle_direction = random(1, 5);
+  ballStart = 1;
+  }
+
+void initPrograme()
+{
+  goTitleScreen();
+  state = gameMenu;
+  gb.battery.show = false;
+}
+
+void goTitleScreen()
+{
+  gb.titleScreen(F("Ninja Game"));
 }
