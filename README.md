@@ -8,9 +8,9 @@ Lots of Fun Secrets and Stuff, Tell Me If You Liked It :)
 Trailer: https://youtu.be/CgjkndHqYoo
 
 How To Play:
-Download the Hex file, 
+Download the zip and unzip it, 
 Go to this Emulator: http://simbuino4web.ppl-pilot.com/, 
-Choose the Slice & Dice Hex File, 
+Choose the Slice & Dice *Hex* File, 
 Have Fun :)
 
 (Press A to throw shurikens in the direction you're facing)
