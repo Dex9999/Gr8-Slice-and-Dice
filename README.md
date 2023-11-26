@@ -1,19 +1,19 @@
 # Slice & Dice
 By D&E Inc
 
-A game for the Makerbuino with art by Evon
+A game for the Makerbuino with art by Evan Fleese
 
-Lots of Fun Secrets and Stuff, Tell Me If You Liked It :)
+Loads of fun secrets to find :)
 
-Trailer: https://youtu.be/CgjkndHqYoo
+Cinematic Trailer: https://youtu.be/CgjkndHqYoo
 
 How To Play:
-Download the zip and unzip it, 
+Download the zip file and unzip it, 
 Go to this Emulator: http://simbuino4web.ppl-pilot.com/, 
-Choose the Slice & Dice **Hex** File, 
-Have Fun :)
+Choose the Slice & Dice **Hex** File from Your Computer, 
+Have Fun!
 
 (Press A to throw shurikens in the direction you're facing)
 
-Secret Stuff Hehe:
-If your reading this you're probably pretty cool so I'm gonna tell you a secret. If you go to the tutorial section and spam the left and right buttons at the same time (s and f on the emulator) you can unlock all four secrets without having to beat each gamemode!
+Lil Dev Hack:
+If you go to the tutorial section and spam the left and right buttons at the same time (s and f on the emulator) you can unlock all four secrets without having to beat each gamemode!
